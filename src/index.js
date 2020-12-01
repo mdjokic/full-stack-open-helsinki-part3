@@ -27,6 +27,12 @@ let persons = [
   },
 ];
 
+const generateId = () => {
+  return Math.round(Math.random() * 10000);
+}
+
+app.use(express.json());
+
 app.get('/info', (_, res) => {
   const responseHtml = `<div>
     <div>Phonebook has info for ${persons.length} people</div>
@@ -48,6 +54,13 @@ app.get('/api/persons/:id', (req, res) => {
 app.get('/api/persons', (_, res) => {
   res.json(persons);
 });
+
+app.post('/api/persons', (req, res) => {
+  const newPerson = req.body;
+  newPerson.id = generateId();
+  persons = persons.concat(newPerson);
+  res.json(newPerson);
+})
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
