@@ -3,7 +3,6 @@ const express = require('express');
 const morgan = require('morgan');
 const app = express();
 
-const PORT_NUMBER = 3001;
 
 let persons = [
   {
@@ -28,9 +27,10 @@ let persons = [
   },
 ];
 
-const generateId = () => {
-  return Math.round(Math.random() * 10000);
-};
+
+//--------------------------------------------
+// Validation func
+//--------------------------------------------
 
 const checkBodyContent = (person) => {
   let retMessage = null;
@@ -61,16 +61,40 @@ const checkName = (newPerson) => {
   return retMessage;
 };
 
-app.use(express.json());
-app.use(morgan('tiny'));
+//--------------------------------------------
+// Utility func
+//--------------------------------------------
 
-app.get('/info', (_, res) => {
-  const responseHtml = `<div>
-    <div>Phonebook has info for ${persons.length} people</div>
-    <div>${new Date()}</div>
-    </div>`;
-  res.send(responseHtml);
-});
+const generateId = () => {
+  return Math.round(Math.random() * 10000);
+};
+
+//--------------------------------------------
+// Entry middlewares logging
+//--------------------------------------------
+
+app.use(express.json());
+
+//--------------------------------------------
+// Morgan logging
+//--------------------------------------------
+
+morgan.token('body', (req) => JSON.stringify(req.body));
+
+app.use(
+  morgan('tiny', {
+    skip: (req, _) => req.method === 'POST',
+  })
+);
+app.use(
+  morgan(':method :url :status :res[content-length] - :response-time ms :body', {
+    skip: (req, _) => req.method !== 'POST',
+  })
+);
+
+//--------------------------------------------
+// Endpoints
+//--------------------------------------------
 
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
@@ -112,6 +136,16 @@ app.delete('/api/persons/:id', (req, res) => {
 app.get('/', (_, response) => {
   response.send('<h1>Hello World!</h1>');
 });
+
+app.get('/info', (_, res) => {
+  const responseHtml = `<div>
+    <div>Phonebook has info for ${persons.length} people</div>
+    <div>${new Date()}</div>
+    </div>`;
+  res.send(responseHtml);
+});
+
+const PORT_NUMBER = 3001;
 
 app.listen(PORT_NUMBER, () => {
   console.log(`Server is up and listening on port: ${PORT_NUMBER}`);
