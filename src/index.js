@@ -1,5 +1,6 @@
 const { response } = require('express');
 const express = require('express');
+const morgan = require('morgan');
 const app = express();
 
 const PORT_NUMBER = 3001;
@@ -61,6 +62,7 @@ const checkName = (newPerson) => {
 };
 
 app.use(express.json());
+app.use(morgan('tiny'));
 
 app.get('/info', (_, res) => {
   const responseHtml = `<div>
