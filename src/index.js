@@ -29,7 +29,36 @@ let persons = [
 
 const generateId = () => {
   return Math.round(Math.random() * 10000);
-}
+};
+
+const checkBodyContent = (person) => {
+  let retMessage = null;
+  if (!person.number && !person.name) {
+    retMessage = {
+      error: `Person's number and name are missing`,
+    };
+  } else if (!person.number) {
+    retMessage = {
+      error: `Person's number is missing`,
+    };
+  } else if (!person.name) {
+    retMessage = {
+      error: `Person's name is missing`,
+    };
+  }
+  return retMessage;
+};
+
+const checkName = (newPerson) => {
+  let retMessage = null;
+  const person = persons.find((person) => person.name === newPerson.name);
+  if (person) {
+    retMessage = {
+      error: `Person's name must be unique`,
+    };
+  }
+  return retMessage;
+};
 
 app.use(express.json());
 
@@ -57,16 +86,26 @@ app.get('/api/persons', (_, res) => {
 
 app.post('/api/persons', (req, res) => {
   const newPerson = req.body;
+  const bodyContentError = checkBodyContent(newPerson);
+  if (bodyContentError) {
+    return res.status(400).json(bodyContentError);
+  }
+
+  const nameError = checkName(newPerson);
+  if (nameError) {
+    return res.status(400).json(nameError);
+  }
+
   newPerson.id = generateId();
   persons = persons.concat(newPerson);
   res.json(newPerson);
-})
+});
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id);
-  persons = persons.filter(person => person.id !== id);
+  persons = persons.filter((person) => person.id !== id);
   res.status(204).end();
-})
+});
 
 app.get('/', (_, response) => {
   response.send('<h1>Hello World!</h1>');

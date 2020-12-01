@@ -5,3 +5,23 @@ Content-Type: application/json
   "name": "Petar Petrovic",
   "number": "555-333"
 }
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "Petar"
+}
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "number": "555-333"
+}
+
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+}
