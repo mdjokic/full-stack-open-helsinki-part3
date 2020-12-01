@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const app = express();
 
 //--------------------------------------------
@@ -28,7 +29,6 @@ let persons = [
     id: 4,
   },
 ];
-
 
 //--------------------------------------------
 // Validation func
@@ -72,9 +72,9 @@ const generateId = () => {
 };
 
 //--------------------------------------------
-// Entry middlewares logging
+// Entry middlewares
 //--------------------------------------------
-
+app.use(cors());
 app.use(express.json());
 
 //--------------------------------------------
@@ -147,8 +147,8 @@ app.get('/info', (_, res) => {
   res.send(responseHtml);
 });
 
-const PORT_NUMBER = 3001;
+const PORT = process.env.PORT || 3001;
 
-app.listen(PORT_NUMBER, () => {
-  console.log(`Server is up and listening on port: ${PORT_NUMBER}`);
+app.listen(PORT, () => {
+  console.log(`Server is up and listening on port: ${PORT}`);
 });
