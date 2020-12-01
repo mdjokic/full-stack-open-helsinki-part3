@@ -34,6 +34,16 @@ app.get('/info', (_, res) => {
   res.send(responseHtml);
 });
 
+app.get('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const retPerson = persons.find((person) => person.id === id);
+  if (retPerson) {
+    res.json(retPerson);
+  } else {
+    res.status(404).end();
+  }
+});
+
 app.get('/api/persons', (_, res) => {
   res.json(persons);
 });
