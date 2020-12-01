@@ -1,9 +1,10 @@
+const { response } = require('express');
 const express = require('express');
 const app = express();
 
 const PORT_NUMBER = 3001;
 
-const persons = [
+let persons = [
   {
     name: 'Arto Hellas',
     number: '040-123456',
@@ -47,6 +48,12 @@ app.get('/api/persons/:id', (req, res) => {
 app.get('/api/persons', (_, res) => {
   res.json(persons);
 });
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id);
+  persons = persons.filter(person => person.id !== id);
+  res.status(204).end();
+})
 
 app.get('/', (_, response) => {
   response.send('<h1>Hello World!</h1>');
